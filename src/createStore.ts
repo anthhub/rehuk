@@ -7,7 +7,7 @@ const defaultReducer = (state: PlainObject, action: Action<any>) => ({
 })
 
 const actionFiller = (action: any) => {
-  if (!action.type && !action.payload) {
+  if (action !== 'function' && !action.type && !action.payload) {
     return { type: 'default', payload: action }
   }
   return action
@@ -46,21 +46,12 @@ const createStore = <T extends PlainObject>(
   const dispatch = (action: Action<T>) => {
     liseners.forEach((fn: Function) => fn(action))
   }
-  const setState = (newState: T) => {
-    if (typeof newState === 'function') {
-      newState((payload: any) => dispatch(actionFiller(payload)), getState)
-      return
-    }
-
-    if (newState === null || typeof newState !== 'object') {
-      throw new Error('Expected the setState param to be a function or plain object.')
-    }
-
-    dispatch(actionFiller(newState))
+  const setState = async (newState: T | Action<T>) => {
+    dispatch(newState as Action<T>)
   }
 
   const resetState = () => {
-    setState(initialState)
+    return setState(initialState)
   }
 
   const useStore = () => {
@@ -68,7 +59,7 @@ const createStore = <T extends PlainObject>(
     model = state
 
     useEffect(() => {
-      const dispatchEvent = (action: Action<T>) => dispatch(action)
+      const dispatchEvent = (action: Action<T>) => dispatch(actionFiller(action))
       return subscribe(dispatchEvent)
     }, [dispatch])
     return { state: getState(), setState, resetState }
