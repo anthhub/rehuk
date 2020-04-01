@@ -49,6 +49,7 @@ const createStore = <T extends PlainObject>(
   const setState = (newState: T) => {
     if (typeof newState === 'function') {
       newState((payload: any) => dispatch(actionFiller(payload)))
+      return
     }
 
     if (newState === null || typeof newState !== 'object') {
