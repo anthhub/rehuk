@@ -48,7 +48,7 @@ const createStore = <T extends PlainObject>(
   }
   const setState = (newState: T) => {
     if (typeof newState === 'function') {
-      newState((payload: any) => dispatch(actionFiller(payload)))
+      newState((payload: any) => dispatch(actionFiller(payload)), getState)
       return
     }
 
