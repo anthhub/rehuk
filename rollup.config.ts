@@ -10,16 +10,23 @@ const pkg = require('./package.json')
 const libraryName = 'rehuk'
 
 export default {
-  input: `src/${libraryName}.ts`,
-  output: [
-    { file: pkg.main, name: camelCase(libraryName), format: 'umd', sourcemap: true },
-    { file: pkg.module, format: 'es', sourcemap: true },
-  ],
-  // Indicate here external modules you don't wanna include in your bundle (i.e.: 'lodash')
-  external: [],
-  watch: {
-    include: 'src/**',
+  input: `src/${'index'}.ts`,
+  output: {
+    file: pkg.main,
+    name: camelCase(libraryName),
+    format: 'umd',
+    sourcemap: true,
+    globals: {
+      react: 'React'
+    }
   },
+
+  // Indicate here external modules you don't wanna include in your bundle (i.e.: 'lodash')
+  external: ['react'],
+  watch: {
+    include: 'src/**'
+  },
+
   plugins: [
     // Allow json resolution
     json(),
@@ -33,6 +40,6 @@ export default {
     resolve(),
 
     // Resolve source maps to the original source
-    sourceMaps(),
-  ],
+    sourceMaps()
+  ]
 }
